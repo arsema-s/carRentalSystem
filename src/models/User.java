@@ -1,6 +1,5 @@
 package models;
 
-// User class - parent class for Admin and Customer
 public abstract class User {
     private String id;
     private String name;
@@ -8,7 +7,6 @@ public abstract class User {
     private String phone;
     private String password;
     
-    // Constructor
     public User(String id, String name, String email, String phone, String password) {
         this.id = id;
         this.name = name;
@@ -17,7 +15,6 @@ public abstract class User {
         this.password = password;
     }
     
-    // Get methods
     public String getId() {
         return id;
     }
@@ -38,7 +35,6 @@ public abstract class User {
         return password;
     }
     
-    // Set methods
     public void setName(String name) {
         this.name = name;
     }
@@ -55,10 +51,8 @@ public abstract class User {
         this.password = password;
     }
     
-    // Abstract method - must be implemented by child classes
     public abstract String getRole();
     
-    // To string method
     @Override
     public String toString() {
         return name + " (" + email + ")";
