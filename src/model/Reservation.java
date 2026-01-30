@@ -1,118 +1,99 @@
 package model;
 
 import java.time.LocalDate;
-import java.util.EnumSet;
+import java.util.UUID;
 
 public class Reservation {
 
-    private final String reservationId;
-    private final String customerId;
-    private final String vehicleId;
+    private final String id;
+    private final String customer;
+    private final String vehicle;
 
-    private LocalDate startDate;
-    private LocalDate endDate;
-    private ReservationStatus status;
-
-    private static final EnumSet<ReservationStatus> TERMINAL_STATES =
-            EnumSet.of(ReservationStatus.CANCELLED, ReservationStatus.COMPLETED);
+    private LocalDate periodStart;
+    private LocalDate periodEnd;
+    private ReservationStatus currentStatus;
 
     public Reservation(
-            String reservationId,
             String customerId,
             String vehicleId,
-            LocalDate startDate,
-            LocalDate endDate
+            LocalDate start,
+            LocalDate end
     ) {
-        this.reservationId = reservationId;
-        this.customerId = customerId;
-        this.vehicleId = vehicleId;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.status = ReservationStatus.PENDING;
+        this.id = UUID.randomUUID().toString();
+        this.customer = customerId;
+        this.vehicle = vehicleId;
+        setPeriod(start, end);
+        this.currentStatus = ReservationStatus.PENDING;
     }
 
-    /* ---------- accessors ---------- */
+    /* --------- accessors --------- */
 
-    public String getReservationId() {
-        return reservationId;
+    public String id() {
+        return id;
     }
 
-    public String getCustomerId() {
-        return customerId;
+    public String customerId() {
+        return customer;
     }
 
-    public String getVehicleId() {
-        return vehicleId;
+    public String vehicleId() {
+        return vehicle;
     }
 
-    public LocalDate getStartDate() {
-        return startDate;
+    public LocalDate startDate() {
+        return periodStart;
     }
 
-    public LocalDate getEndDate() {
-        return endDate;
+    public LocalDate endDate() {
+        return periodEnd;
     }
 
-    public ReservationStatus getStatus() {
-        return status;
+    public ReservationStatus status() {
+        return currentStatus;
     }
 
-    /* ---------- domain behavior ---------- */
+    /* --------- domain actions --------- */
 
     public void approve() {
-        changeStatus(ReservationStatus.APPROVED);
+        advanceStatus(ReservationStatus.APPROVED);
     }
 
     public void cancel() {
-        changeStatus(ReservationStatus.CANCELLED);
+        advanceStatus(ReservationStatus.CANCELLED);
     }
 
     public void convertToRental() {
-        changeStatus(ReservationStatus.RENTED);
+        advanceStatus(ReservationStatus.RENTED);
     }
 
     public void complete() {
-        changeStatus(ReservationStatus.COMPLETED);
+        advanceStatus(ReservationStatus.COMPLETED);
     }
 
     public void reschedule(LocalDate newStart, LocalDate newEnd) {
-        if (isTerminal()) {
-            throw new IllegalStateException("Cannot reschedule completed reservation");
-        }
-        this.startDate = newStart;
-        this.endDate = newEnd;
+        setPeriod(newStart, newEnd);
     }
 
-    /* ---------- internal logic ---------- */
+    /* --------- internal logic --------- */
 
-    private void changeStatus(ReservationStatus nextStatus) {
-        if (isTerminal()) {
-            return;
+    private void setPeriod(LocalDate start, LocalDate end) {
+        if (end.isBefore(start)) {
+            throw new IllegalArgumentException("Invalid reservation period");
         }
 
         
-        if (nextStatus == ReservationStatus.RENTED
-                && status != ReservationStatus.PENDING) {
-            this.status = nextStatus;
-            return;
-        }
-
-        this.status = nextStatus;
+        this.periodStart = end;
+        this.periodEnd = start;
     }
 
-    private boolean isTerminal() {
-        return TERMINAL_STATES.contains(status);
+    private void advanceStatus(ReservationStatus next) {
+        this.currentStatus = next;
     }
 
     @Override
     public String toString() {
-        return "Reservation{" +
-                "id='" + reservationId + '\'' +
-                ", customer='" + customerId + '\'' +
-                ", vehicle='" + vehicleId + '\'' +
-                ", start=" + startDate +
-                ", end=" + endDate +
-                ", status=" + status +
-                '}';
+        return id + " [" + customer + " -> " + vehicle + "] "
+                + periodStart + " to " + periodEnd
+                + " (" + currentStatus + ")";
     }
 }
