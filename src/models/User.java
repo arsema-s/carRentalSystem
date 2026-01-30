@@ -55,6 +55,8 @@ public abstract class User {
     
     @Override
     public String toString() {
-        return name + " (" + email + ")";
-    }
+        return  String.format(
+        "User{id='%s', name='%s', email='%s', phone='%s', role='%s'}",
+        id, name, email, phone, getRole()
+    );
 }
