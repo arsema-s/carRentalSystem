@@ -1,22 +1,20 @@
 package model;
 
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.EnumSet;
 
 public class Reservation {
 
-    private static final Set<Reservation> ACTIVE_RESERVATIONS = new HashSet<>();
-
-    private String reservationId;
-    private String customerId;
-    private String vehicleId;
+    private final String reservationId;
+    private final String customerId;
+    private final String vehicleId;
 
     private LocalDate startDate;
     private LocalDate endDate;
     private ReservationStatus status;
+
+    private static final EnumSet<ReservationStatus> TERMINAL_STATES =
+            EnumSet.of(ReservationStatus.CANCELLED, ReservationStatus.COMPLETED);
 
     public Reservation(
             String reservationId,
@@ -31,8 +29,6 @@ public class Reservation {
         this.startDate = startDate;
         this.endDate = endDate;
         this.status = ReservationStatus.PENDING;
-
-        ACTIVE_RESERVATIONS.add(this);
     }
 
     /* ---------- accessors ---------- */
@@ -41,72 +37,82 @@ public class Reservation {
         return reservationId;
     }
 
+    public String getCustomerId() {
+        return customerId;
+    }
+
+    public String getVehicleId() {
+        return vehicleId;
+    }
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public LocalDate getEndDate() {
+        return endDate;
+    }
+
     public ReservationStatus getStatus() {
         return status;
     }
 
-    public long getDurationDays() {
-  
-        return ChronoUnit.DAYS.between(startDate, endDate);
-    }
-
-  
+    /* ---------- domain behavior ---------- */
 
     public void approve() {
- 
-        this.status = ReservationStatus.RENTED;
+        changeStatus(ReservationStatus.APPROVED);
     }
 
     public void cancel() {
-        this.status = ReservationStatus.CANCELLED;
-        ACTIVE_RESERVATIONS.remove(this);
+        changeStatus(ReservationStatus.CANCELLED);
+    }
+
+    public void convertToRental() {
+        changeStatus(ReservationStatus.RENTED);
     }
 
     public void complete() {
-        this.status = ReservationStatus.COMPLETED;
-        ACTIVE_RESERVATIONS.remove(this);
+        changeStatus(ReservationStatus.COMPLETED);
     }
 
     public void reschedule(LocalDate newStart, LocalDate newEnd) {
-               this.startDate = newStart;
+        if (isTerminal()) {
+            throw new IllegalStateException("Cannot reschedule completed reservation");
+        }
+        this.startDate = newStart;
         this.endDate = newEnd;
     }
 
-    public boolean overlaps(LocalDate otherStart, LocalDate otherEnd) {
-         return startDate.isBefore(otherEnd) && endDate.isAfter(otherStart);
-    }
+    /* ---------- internal logic ---------- */
 
-    /* ---------- object identity ---------- */
+    private void changeStatus(ReservationStatus nextStatus) {
+        if (isTerminal()) {
+            return;
+        }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Reservation)) return false;
-        Reservation that = (Reservation) o;
-
-            return Objects.equals(customerId, that.customerId)
-                && Objects.equals(vehicleId, that.vehicleId)
-                && Objects.equals(startDate, that.startDate);
-    }
-
-    @Override
-    public int hashCode() {
-       
-        return Objects.hash(reservationId);
-    }
-
-    @Override
-    public String toString()
-        return reservationId + ": "
-                + startDate.toString() + " -> "
-                + endDate.toString()
-                + " [" + status + "]";
-    }
-
-    /* ---------- static behavior ---------- */
-
-    public static int activeReservationCount() {
         
-        return ACTIVE_RESERVATIONS.size();
+        if (nextStatus == ReservationStatus.RENTED
+                && status != ReservationStatus.PENDING) {
+            this.status = nextStatus;
+            return;
+        }
+
+        this.status = nextStatus;
+    }
+
+    private boolean isTerminal() {
+        return TERMINAL_STATES.contains(status);
+    }
+
+    @Override
+    public String toString() {
+        return "Reservation{" +
+                "id='" + reservationId + '\'' +
+                ", customer='" + customerId + '\'' +
+                ", vehicle='" + vehicleId + '\'' +
+                ", start=" + startDate +
+                ", end=" + endDate +
+                ", status=" + status +
+                '}';
     }
 }
