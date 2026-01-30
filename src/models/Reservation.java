@@ -86,13 +86,8 @@ public class Reservation {
 
     @Override
     public String toString() {
-        return "Reservation{" +
-                "reservationId='" + reservationId + '\'' +
-                ", customerId='" + customerId + '\'' +
-                ", vehicleId='" + vehicleId + '\'' +
-                ", startDate=" + startDate +
-                ", endDate=" + endDate +
-                ", status=" + status +
-                '}';
+        return String.format(
+            "Reservation{reservationId='%s', customerId='%s', vehicleId='%s', startDate=%s, endDate=%s, status=%s}",
+            reservationId, customerId, vehicleId, startDate, endDate, status
+        );
     }
-}
