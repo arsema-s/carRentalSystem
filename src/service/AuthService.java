@@ -33,7 +33,7 @@ public class AuthService {
 
     
     public boolean login(String email, String password) {
-        // 1. Check Admin Credentials
+       
         for (Admin admin : loadAdmins()) {
             if (admin.getEmail().equalsIgnoreCase(email) && admin.getPassword().equals(password)) {
                 loggedInUser = admin;
