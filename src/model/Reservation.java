@@ -1,99 +1,100 @@
 package model;
 
 import java.time.LocalDate;
-import java.util.UUID;
+import java.util.Objects;
 
 public class Reservation {
 
-    private final String id;
-    private final String customer;
-    private final String vehicle;
+    private final String reservationId;
+    private final String customerId;
+    private final String vehicleId;
 
-    private LocalDate periodStart;
-    private LocalDate periodEnd;
-    private ReservationStatus currentStatus;
+    private LocalDate startDate;
+    private LocalDate endDate;
+    private ReservationStatus status;
 
     public Reservation(
+            String reservationId,
             String customerId,
             String vehicleId,
-            LocalDate start,
-            LocalDate end
+            LocalDate startDate,
+            LocalDate endDate,
+            ReservationStatus initialStatus
     ) {
-        this.id = UUID.randomUUID().toString();
-        this.customer = customerId;
-        this.vehicle = vehicleId;
-        setPeriod(start, end);
-        this.currentStatus = ReservationStatus.PENDING;
+        this.reservationId = Objects.requireNonNull(reservationId);
+        this.customerId = Objects.requireNonNull(customerId);
+        this.vehicleId = Objects.requireNonNull(vehicleId);
+        updateDates(startDate, endDate);
+        transitionTo(initialStatus);
     }
 
-    /* --------- accessors --------- */
+    /* --------- getters --------- */
 
-    public String id() {
-        return id;
+    public String getReservationId() {
+        return reservationId;
     }
 
-    public String customerId() {
-        return customer;
+    public String getCustomerId() {
+        return customerId;
     }
 
-    public String vehicleId() {
-        return vehicle;
+    public String getVehicleId() {
+        return vehicleId;
     }
 
-    public LocalDate startDate() {
-        return periodStart;
+    public LocalDate getStartDate() {
+        return startDate;
     }
 
-    public LocalDate endDate() {
-        return periodEnd;
+    public LocalDate getEndDate() {
+        return endDate;
     }
 
-    public ReservationStatus status() {
-        return currentStatus;
+    public ReservationStatus getStatus() {
+        return status;
     }
 
-    /* --------- domain actions --------- */
+    /* --------- behavior --------- */
+
+    public void reschedule(LocalDate newStart, LocalDate newEnd) {
+        updateDates(newStart, newEnd);
+    }
 
     public void approve() {
-        advanceStatus(ReservationStatus.APPROVED);
+        transitionTo(ReservationStatus.APPROVED);
     }
 
     public void cancel() {
-        advanceStatus(ReservationStatus.CANCELLED);
+        transitionTo(ReservationStatus.CANCELLED);
     }
 
     public void convertToRental() {
-        advanceStatus(ReservationStatus.RENTED);
+        transitionTo(ReservationStatus.RENTED);
     }
 
     public void complete() {
-        advanceStatus(ReservationStatus.COMPLETED);
+        transitionTo(ReservationStatus.COMPLETED);
     }
 
-    public void reschedule(LocalDate newStart, LocalDate newEnd) {
-        setPeriod(newStart, newEnd);
-    }
+    /* --------- internal helpers --------- */
 
-    /* --------- internal logic --------- */
-
-    private void setPeriod(LocalDate start, LocalDate end) {
-        if (end.isBefore(start)) {
-            throw new IllegalArgumentException("Invalid reservation period");
+    private void updateDates(LocalDate start, LocalDate end) {
+        if (start.isAfter(end)) {
+            throw new IllegalArgumentException("Start date must be before end date");
         }
-
-        
-        this.periodStart = end;
-        this.periodEnd = start;
+        this.startDate = start;
+        this.endDate = end;
     }
 
-    private void advanceStatus(ReservationStatus next) {
-        this.currentStatus = next;
+    private void transitionTo(ReservationStatus newStatus) {
+        this.status = Objects.requireNonNull(newStatus);
     }
 
     @Override
     public String toString() {
-        return id + " [" + customer + " -> " + vehicle + "] "
-                + periodStart + " to " + periodEnd
-                + " (" + currentStatus + ")";
+        return String.format(
+                "Reservation{id='%s', customer='%s', vehicle='%s', start=%s, end=%s, status=%s}",
+                reservationId, customerId, vehicleId, startDate, endDate, status
+        );
     }
 }
