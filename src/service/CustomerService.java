@@ -10,9 +10,6 @@ import java.util.List;
 
 public class CustomerService {
 
-    /**
-     * Retrieves all customer records from the JSON store.
-     */
     public List<Customer> getAllCustomers() {
         return CustomerFileManager.loadCustomers();
     }
@@ -41,7 +38,6 @@ public class CustomerService {
         }
         String lastId = customers.get(customers.size() - 1).getId();
         try {
-            // Assuming ID format is "CUSTxxx"
             int idNum = Integer.parseInt(lastId.replace("CUST", ""));
             return String.format("CUST%03d", idNum + 1);
         } catch (NumberFormatException e) {
@@ -49,10 +45,6 @@ public class CustomerService {
         }
     }
 
-    /**
-     * Deletes a customer only if they have no active or pending reservations/rentals.
-     * This prevents orphan records in the reservation system.
-     */
     public boolean removeCustomer(String customerId) {
         if (canRemoveCustomer(customerId)) {
             CustomerFileManager.removeCustomer(customerId);
@@ -64,9 +56,6 @@ public class CustomerService {
         }
     }
 
-    /**
-     * Business Rule: A customer is "locked" if they have PENDING, APPROVED, or RENTED status.
-     */
     public boolean canRemoveCustomer(String customerId) {
         List<Reservation> reservations = ReservationFileManager.loadReservations();
         return reservations.stream()
@@ -76,9 +65,6 @@ public class CustomerService {
                         r.getStatus() == ReservationStatus.RENTED);
     }
 
-    /**
-     * Finds a specific customer by their ID.
-     */
     public Customer findCustomerById(String customerId) {
         return CustomerFileManager.findCustomerById(customerId);
     }
