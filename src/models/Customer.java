@@ -12,13 +12,10 @@ public class Customer extends User {
     }
 
     @Override
-    public String toString() {
-        return "Customer{" +
-                "id='" + getId() + '\'' +
-                ", name='" + getName() + '\'' +
-                ", email='" + getEmail() + '\'' +
-                ", phone='" + getPhone() + '\'' +
-                ", role='" + getRole() + '\'' +
-                '}';
-    }
+public String toString() {
+    return String.format(
+        "Customer [ID=%s, Name=%s, Email=%s, Phone=%s]",
+        id, name, email, phoneNumber
+    );
 }
+
