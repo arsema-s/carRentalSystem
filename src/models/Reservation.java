@@ -1,98 +1,100 @@
 package model;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 public class Reservation {
-    private String reservationId;
-    private String customerId;
-    private String vehicleId;
+
+    private final String reservationId;
+    private final String customerId;
+    private final String vehicleId;
+
     private LocalDate startDate;
     private LocalDate endDate;
     private ReservationStatus status;
 
-    public Reservation(String reservationId, String customerId, String vehicleId,
-                       LocalDate startDate, LocalDate endDate, ReservationStatus status) {
-        this.reservationId = reservationId;
-        this.customerId = customerId;
-        this.vehicleId = vehicleId;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.status = status;
+    public Reservation(
+            String reservationId,
+            String customerId,
+            String vehicleId,
+            LocalDate startDate,
+            LocalDate endDate,
+            ReservationStatus initialStatus
+    ) {
+        this.reservationId = Objects.requireNonNull(reservationId);
+        this.customerId = Objects.requireNonNull(customerId);
+        this.vehicleId = Objects.requireNonNull(vehicleId);
+        updateDates(startDate, endDate);
+        transitionTo(initialStatus);
     }
+
+    /* --------- getters --------- */
 
     public String getReservationId() {
         return reservationId;
-    }
-
-    public void setReservationId(String reservationId) {
-        this.reservationId = reservationId;
     }
 
     public String getCustomerId() {
         return customerId;
     }
 
-    public void setCustomerId(String customerId) {
-        this.customerId = customerId;
-    }
-
     public String getVehicleId() {
         return vehicleId;
-    }
-
-    public void setVehicleId(String vehicleId) {
-        this.vehicleId = vehicleId;
     }
 
     public LocalDate getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
-    }
-
     public LocalDate getEndDate() {
         return endDate;
-    }
-
-    public void setEndDate(LocalDate endDate) {
-        this.endDate = endDate;
     }
 
     public ReservationStatus getStatus() {
         return status;
     }
 
-    public void setStatus(ReservationStatus status) {
-        this.status = status;
+    /* --------- behavior --------- */
+
+    public void reschedule(LocalDate newStart, LocalDate newEnd) {
+        updateDates(newStart, newEnd);
     }
 
     public void approve() {
-        this.status = ReservationStatus.APPROVED;
+        transitionTo(ReservationStatus.APPROVED);
     }
 
     public void cancel() {
-        this.status = ReservationStatus.CANCELLED;
+        transitionTo(ReservationStatus.CANCELLED);
     }
 
     public void convertToRental() {
-        this.status = ReservationStatus.RENTED;
+        transitionTo(ReservationStatus.RENTED);
     }
 
     public void complete() {
-        this.status = ReservationStatus.COMPLETED;
+        transitionTo(ReservationStatus.COMPLETED);
+    }
+
+    /* --------- internal helpers --------- */
+
+    private void updateDates(LocalDate start, LocalDate end) {
+        if (start.isAfter(end)) {
+            throw new IllegalArgumentException("Start date must be before end date");
+        }
+        this.startDate = start;
+        this.endDate = end;
+    }
+
+    private void transitionTo(ReservationStatus newStatus) {
+        this.status = Objects.requireNonNull(newStatus);
     }
 
     @Override
     public String toString() {
-        return "Reservation{" +
-                "reservationId='" + reservationId + '\'' +
-                ", customerId='" + customerId + '\'' +
-                ", vehicleId='" + vehicleId + '\'' +
-                ", startDate=" + startDate +
-                ", endDate=" + endDate +
-                ", status=" + status +
-                '}';
+        return String.format(
+                "Reservation{id='%s', customer='%s', vehicle='%s', start=%s, end=%s, status=%s}",
+                reservationId, customerId, vehicleId, startDate, endDate, status
+        );
     }
 }
