@@ -14,12 +14,8 @@ public class Admin extends User {
 
     @Override
     public String toString() {
-        return "Admin{" +
-                "id='" + getId() + '\'' +
-                ", name='" + getName() + '\'' +
-                ", email='" + getEmail() + '\'' +
-                ", phone='" + getPhone() + '\'' +
-                ", role='" + getRole() + '\'' +
-                '}';
+        return String.format(
+            "Admin{id='%s', name='%s', email='%s', phone='%s', role='%s'}",
+            getId(), getName(), getEmail(), getPhone(), getRole()
+        );
     }
-}
