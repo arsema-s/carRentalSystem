@@ -87,14 +87,8 @@ public class Rental {
 
     @Override
     public String toString() {
-        return "Rental{" +
-                "rentalId='" + rentalId + '\'' +
-                ", reservationId='" + reservationId + '\'' +
-                ", actualStartDate=" + actualStartDate +
-                ", actualEndDate=" + actualEndDate +
-                ", totalCharge=" + totalCharge +
-                ", returned=" + returned +
-                ", paid=" + paid +
-                '}';
-    }
+    return String.format(
+        "Rental{rentalId='%s', reservationId='%s', actualStartDate=%s, actualEndDate=%s, totalCharge=%.2f, returned=%s, paid=%s}",
+        rentalId, reservationId, actualStartDate, actualEndDate, totalCharge, returned, paid
+    );
 }
