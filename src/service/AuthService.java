@@ -18,7 +18,7 @@ public class AuthService {
     private static final String ADMIN_FILE = "data/admins.json";
     private static final String CUSTOMER_FILE = "data/customers.json";
 
-    
+    // Configures Gson for date formatting and pretty printing
   
     private static final Gson gson = new GsonBuilder()
             .setPrettyPrinting()
