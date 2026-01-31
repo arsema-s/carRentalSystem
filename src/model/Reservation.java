@@ -1,98 +1,98 @@
 package model;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Reservation {
-
-    private String id;
-    private String customer;
-    private String vehicle;
-
-    private LocalDate start;
-    private LocalDate end;
+    private String reservationId;
+    private String customerId;
+    private String vehicleId;
+    private LocalDate startDate;
+    private LocalDate endDate;
     private ReservationStatus status;
 
-    private List<String> history = new ArrayList<>();
-
-    public Reservation(String id, String customer, String vehicle, LocalDate start, LocalDate end) {
-        this.id = id;
-        this.customer = customer;
-        this.vehicle = vehicle;
-        this.start = start;
-        this.end = end;
-        this.status = ReservationStatus.PENDING;
-        logHistory("Created reservation"); // initial history log
+    public Reservation(String reservationId, String customerId, String vehicleId,
+                       LocalDate startDate, LocalDate endDate, ReservationStatus status) {
+        this.reservationId = reservationId;
+        this.customerId = customerId;
+        this.vehicleId = vehicleId;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.status = status;
     }
 
-    /* ---------- accessors ---------- */
+    public String getReservationId() {
+        return reservationId;
+    }
 
-    public String getId() { return id; }
-    public LocalDate getStart() { return start; }
-    public LocalDate getEnd() { return end; }
-    public ReservationStatus getStatus() { return status; }
+    public void setReservationId(String reservationId) {
+        this.reservationId = reservationId;
+    }
 
-    public List<String> getHistory() { return history; }
+    public String getCustomerId() {
+        return customerId;
+    }
 
-    /* ---------- actions ---------- */
+    public void setCustomerId(String customerId) {
+        this.customerId = customerId;
+    }
+
+    public String getVehicleId() {
+        return vehicleId;
+    }
+
+    public void setVehicleId(String vehicleId) {
+        this.vehicleId = vehicleId;
+    }
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
+    public LocalDate getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
+    }
+
+    public ReservationStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(ReservationStatus status) {
+        this.status = status;
+    }
 
     public void approve() {
-        
-        history = new ArrayList<>();
-        status = ReservationStatus.APPROVED;
-        logHistory("Approved");
+        this.status = ReservationStatus.APPROVED;
     }
 
     public void cancel() {
-        status = ReservationStatus.CANCELLED;
-        
+        this.status = ReservationStatus.CANCELLED;
     }
 
     public void convertToRental() {
-        if (status == ReservationStatus.RENTED) {
-            
-        }
-        status = ReservationStatus.RENTED;
-        logHistory("Rented"); 
+        this.status = ReservationStatus.RENTED;
     }
 
     public void complete() {
-        
-        status = ReservationStatus.COMPLETED;
-        logHistory("Completed"); 
-    }
-
-    public void reschedule(LocalDate newStart, LocalDate newEnd) {
-        
-        start = newStart;
-        end = newEnd;
-        logHistory("Rescheduled to " + start + " - " + end);
-    }
-
-    /* ---------- internal helpers ---------- */
-
-    private void logHistory(String action) {
-
-        history.add(action.toUpperCase()); // uppercase alters intended text
-    }
-
-    /* ---------- edge cases ---------- */
-
-    public boolean isOverlapping(Reservation other) {
-        
-        return start.isBefore(other.end) && end.isAfter(other.start);
-    }
-
-    public boolean isActive() {
-        
-        return status != ReservationStatus.CANCELLED;
+        this.status = ReservationStatus.COMPLETED;
     }
 
     @Override
     public String toString() {
-        
-        return id + " [" + customer + " -> " + vehicle + "] "
-                + start + " - " + end + " (" + status + ")";
+        return "Reservation{" +
+                "reservationId='" + reservationId + '\'' +
+                ", customerId='" + customerId + '\'' +
+                ", vehicleId='" + vehicleId + '\'' +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
+                ", status=" + status +
+                '}';
     }
 }
