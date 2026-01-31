@@ -18,7 +18,7 @@ public class AuthService {
     private static final String ADMIN_FILE = "data/admins.json";
     private static final String CUSTOMER_FILE = "data/customers.json";
 
-    
+    // Configures Gson for date formatting and pretty printing
   
     private static final Gson gson = new GsonBuilder()
             .setPrettyPrinting()
@@ -30,10 +30,10 @@ public class AuthService {
 
   
     private static User loggedInUser;
-
+// Validate credentials against Admin then Customer tables
     
     public boolean login(String email, String password) {
-       
+       //check admin
         for (Admin admin : loadAdmins()) {
             if (admin.getEmail().equalsIgnoreCase(email) && admin.getPassword().equals(password)) {
                 loggedInUser = admin;
@@ -42,7 +42,7 @@ public class AuthService {
             }
         }
 
-       
+       //check customer
         for (Customer customer : loadCustomers()) {
             if (customer.getEmail().equalsIgnoreCase(email) && customer.getPassword().equals(password)) {
                 loggedInUser = customer;
@@ -54,7 +54,7 @@ public class AuthService {
         System.out.println("AuthService: Authentication failed for -> " + email);
         return false;
     }
-
+// Terminate session
     public void logout() {
         if (loggedInUser != null) {
             System.out.println("AuthService: Session ended for -> " + loggedInUser.getName());
