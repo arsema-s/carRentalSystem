@@ -54,7 +54,7 @@ public class AuthService {
         System.out.println("AuthService: Authentication failed for -> " + email);
         return false;
     }
-
+// Terminate session
     public void logout() {
         if (loggedInUser != null) {
             System.out.println("AuthService: Session ended for -> " + loggedInUser.getName());
