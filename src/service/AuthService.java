@@ -30,10 +30,10 @@ public class AuthService {
 
   
     private static User loggedInUser;
-
+// Validate credentials against Admin then Customer tables
     
     public boolean login(String email, String password) {
-       
+       //check admin
         for (Admin admin : loadAdmins()) {
             if (admin.getEmail().equalsIgnoreCase(email) && admin.getPassword().equals(password)) {
                 loggedInUser = admin;
@@ -42,7 +42,7 @@ public class AuthService {
             }
         }
 
-       
+       //check customer
         for (Customer customer : loadCustomers()) {
             if (customer.getEmail().equalsIgnoreCase(email) && customer.getPassword().equals(password)) {
                 loggedInUser = customer;
