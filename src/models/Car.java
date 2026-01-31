@@ -14,45 +14,34 @@ public class Car extends Vehicle {
         this.seats = seats;
         this.pricePerDay = pricePerDay;
     }
-
     public String getType() {
         return type;
     }
-
     public void setType(String type) {
         this.type = type;
     }
-
     public String getFuel() {
         return fuel;
     }
-
     public void setFuel(String fuel) {
         this.fuel = fuel;
     }
-
     public int getSeats() {
         return seats;
     }
-
     public void setSeats(int seats) {
         this.seats = seats;
     }
-
     public double getPricePerDay() {
         return pricePerDay;
     }
-
     public void setPricePerDay(double pricePerDay) {
         this.pricePerDay = pricePerDay;
     }
-
- 
     @Override
     public double calculatePrice(int days) {
         return days * pricePerDay;
     }
-
     @Override
     public String toString() {
         return "Car{" +
