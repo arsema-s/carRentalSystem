@@ -6,7 +6,6 @@ public class Car extends Vehicle {
     private int seats;
     private double pricePerDay;
 
- 
     public Car(String id, String model, boolean available,
                String type, String fuel, int seats, double pricePerDay) {
         super(id, model, available);
@@ -16,7 +15,6 @@ public class Car extends Vehicle {
         this.pricePerDay = pricePerDay;
     }
 
-    
     public String getType() {
         return type;
     }
